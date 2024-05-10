@@ -1,4 +1,4 @@
 import numpy as np
-def export_T(T):
+def export_T(T,dir):
     T = T.x.array
-    np.save("FEM/bridge/data/T", T)
+    np.save(f"{dir}/T", T)

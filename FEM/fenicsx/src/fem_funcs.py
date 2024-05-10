@@ -9,15 +9,15 @@ from mpi4py import MPI
 from petsc4py.PETSc import ScalarType
 from petsc4py import PETSc
 
-import src.postprocess_funcs as postprocess_funcs
+import FEM.fenicsx.src.postprocess_funcs as postprocess_funcs
 
 def load_mesh(dir):
     print('Loading mesh...')
-    with io.XDMFFile(MPI.COMM_WORLD, f"FEM/fenicsx/mesh/xdmf/{dir}_triangle.xdmf", "r") as xdmf:
+    with io.XDMFFile(MPI.COMM_WORLD, f"{dir}/fenicsx/mesh/xdmf/mesh_triangle.xdmf", "r") as xdmf:
         msh = xdmf.read_mesh(name="Grid")
         ct = xdmf.read_meshtags(msh, name="Grid")
     msh.topology.create_connectivity(msh.topology.dim, msh.topology.dim-1)
-    with io.XDMFFile(MPI.COMM_WORLD, f"FEM/fenicsx/mesh/xdmf/{dir}_line.xdmf", "r") as xdmf:
+    with io.XDMFFile(MPI.COMM_WORLD, f"{dir}/fenicsx/mesh/xdmf/mesh_line.xdmf", "r") as xdmf:
         ft = xdmf.read_meshtags(msh, name="Grid")
     return msh,ct,ft
 
@@ -86,9 +86,9 @@ def set_dofs_properties(V,regions):
 
     return k,rho,c,w,Qmet
 
-def export_mesh_facets(mesh):
+def export_mesh_facets(mesh,dir):
     mesh[0].topology.create_connectivity(mesh[0].topology.dim-1, mesh[0].topology.dim)
-    with io.XDMFFile(mesh[0].comm, "results/export_facets/mesh_tags.xdmf", "w") as xdmf:
+    with io.XDMFFile(mesh[0].comm, f"{dir}/fenicsx/results/export_facets/mesh_tags.xdmf", "w") as xdmf:
         xdmf.write_mesh(mesh[0])
         xdmf.write_meshtags(mesh[1])
 
@@ -137,7 +137,7 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
         Tfem = fem.Function(V)
         Tfem.x.array[:] = Ti
         # Crear archivo XDMF y guardar condiciones iniciales
-        xdmf = io.XDMFFile(msh.comm, f"FEM/fenicsx/results/{dir}.xdmf", "w")
+        xdmf = io.XDMFFile(msh.comm, f"{dir}/fenicsx/results/T.xdmf", "w")
         xdmf.write_mesh(msh)
         xdmf.write_function(T_old, t)
 
@@ -146,7 +146,7 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
         #create a txt file to store log
         for i in range(num_steps):
             # Avanzar en el tiempo
-            log = open(f"FEM/fenicsx/log.txt", "a")
+            log = open(f"{dir}/fenicsx/log.txt", "a")
             log.write(f"t = {t:.2f} / {tf:.2f} - Tmax = {Tfem.x.array.max()}\n")
             log.close()
             t += dt
@@ -191,8 +191,8 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
 
     return Tfem
 
-def export_field_mesh(field,msh,name):
+def export_field_mesh(field,msh,name,dir):
     msh = msh[0]
-    xdmf = io.XDMFFile(msh.comm, f"FEM/fenicsx/results/fields/{name}.xdmf", "w")
+    xdmf = io.XDMFFile(msh.comm, f"{dir}/fenicsx/results/fields/{name}.xdmf", "w")
     xdmf.write_mesh(msh)
     xdmf.write_function(field, 0)
