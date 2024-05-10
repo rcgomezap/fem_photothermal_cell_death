@@ -12,7 +12,7 @@ import pandas as pd
 
 Datos= pd.read_excel("Temperature_data.xlsx", sheet_name="2")
 datos = np.array(Datos)
-N=1
+N=2
 T=np.zeros(6)
 TS=np.zeros(6)
 for i in range(N):
