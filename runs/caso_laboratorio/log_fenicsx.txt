@@ -1,0 +1,9 @@
+Loading mesh...
+Scaling mesh...
+Defining function space
+Locating DOFS regions
+Defining FEM objects
+Setting DOFS region properties
+{'convection1': [5, array([252, 267, 293, 306, 332, 357, 381, 404, 426, 445, 464, 480, 496,
+       510, 522, 532, 542, 550, 551, 554, 556, 557], dtype=int32)], 'convectio2': [6, array([  1,   3,   9,  16,  29,  38,  48,  59,  71,  83,  96, 120, 135,
+       151, 170, 192, 214, 239, 252], dtype=int32)]}

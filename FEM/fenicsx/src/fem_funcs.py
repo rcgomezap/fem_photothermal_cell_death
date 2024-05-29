@@ -33,17 +33,6 @@ def locate_dofs(mesh,regions,regions_bc):
     V = fem.FunctionSpace(mesh[0], ("Lagrange", 1))
 
     print('Locating DOFS regions')
-    # tumor_facets = mesh[1].find(10)
-    # tumor_dofs = locate_dofs_topological(V, mesh[0].topology.dim, tumor_facets)
-
-    # tejido_facets = mesh[1].find(11)
-    # tejido_dofs = locate_dofs_topological(V, mesh[0].topology.dim, tejido_facets)
-
-    # convection_bc_facets = mesh[2].find(14)
-    # convection_bc_dofs = locate_dofs_topological(V, mesh[0].topology.dim-1, convection_bc_facets)
-
-    # dirichlet_bc_facets = mesh[2].find(13)
-    # dirichlet_bc_dofs = locate_dofs_topological(V, mesh[0].topology.dim-1, dirichlet_bc_facets)
     for region, tag in regions.items():
         facets = mesh[1].find(tag[0])
         regions[region].append(locate_dofs_topological(V, mesh[0].topology.dim, facets))
