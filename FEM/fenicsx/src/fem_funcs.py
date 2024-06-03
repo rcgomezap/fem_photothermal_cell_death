@@ -2,7 +2,7 @@ import numpy as np
 
 import ufl
 from dolfinx import fem, io
-from dolfinx.fem import Function, locate_dofs_topological, dirichletbc
+from dolfinx.fem import Function, locate_dofs_topological, dirichletbc,Expression
 from ufl import ds, dx, grad, inner, Measure
 
 from mpi4py import MPI
@@ -86,20 +86,21 @@ def set_dirichlet_bcs(V,dirichlet_bc_dofs,temperature):
     bc = [dirichletbc(ScalarType(temperature), dirichlet_bc_dofs, V)]
     return bc
 
-def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coords,regions_bc,postprocess=True):
+def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs_func,h,bc,Ti,Tref,dt,tf,dir,coords,regions_bc,postprocess=True):
     print('Running Simulation...')
     x = ufl.SpatialCoordinate(msh)
     # Definicion de las ecuaciones
     T_old = Function(V)
-    conv_bc = regions_bc['convection'][0]
+    Qs=Function(V)
+    # conv_bc = regions_bc['convection'][0]
     def get_forms():
         a = ((rho*c*T*v + dt*k*inner(grad(T), grad(v)))*x[0]*dx #laplaciano
-            + dt*h*T*v*x[0]*ds(conv_bc) #Condicion de convecccion natural
+            + dt*h*T*v*x[0]*ds #Condicion de convecccion natural
             + dt*T*blood.cp*blood.rho*w*v*x[0]*dx #Perfusion sanguinea
         )
         L = (rho*c*T_old*v*x[0]*dx
             + dt*inner(Qs, v)*x[0]*dx #Laser
-            + dt*h*Tref*v*x[0]*ds(conv_bc) #Condicion de convecccion natural
+            + dt*h*Tref*v*x[0]*ds #Condicion de convecccion natural
             + dt*blood.T*blood.cp*blood.rho*w*v*x[0]*dx#Perfusion sanguinea
             + dt*Qmet*v*x[0]*dx#Calor metabolico)
             )
@@ -120,7 +121,10 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
         solver.setType(PETSc.KSP.Type.BICG)
         solver.getPC().setType(PETSc.PC.Type.GAMG)
         return solver
-    def transient_solver(b,bilinear_form,linear_form,bcs,solver,T_old,dt,tf):
+    def transient_solver(b,bilinear_form,linear_form,bcs,solver,T_old,dt,tf,Qs):
+
+        sol = []
+
         t = 0
         T_old.x.array[:] = Ti
         Tfem = fem.Function(V)
@@ -135,12 +139,14 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
         #create a txt file to store log
         for i in range(num_steps):
             # Avanzar en el tiempo
-            log = open(f"{dir}/fenicsx/log.txt", "a")
-            log.write(f"t = {t:.2f} / {tf:.2f} - Tmax = {Tfem.x.array.max()}\n")
-            log.close()
+            # log = open(f"{dir}/fenicsx/log.txt", "a")
+            # log.write(f"t = {t:.2f} / {tf:.2f} - Tmax = {Tfem.x.array.max()}\n")
+            # log.close()
+            sol.append((t,Tfem.copy()))
             t += dt
-            
+
             # Ensamblar vector lineal
+            Qs.interpolate(Expression(Qs_func(t), V.element.interpolation_points())) # Evaluar fuente de calor
             with b.localForm() as loc_b:
                 loc_b.set(0)
             fem.petsc.assemble_vector(b, linear_form)
@@ -164,7 +170,7 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
                 print(f"t = {t:.2f} / {tf:.2f}")
                 print(f'Tmin = {Tfem.x.array.min()}')
                 print(f'Tmax = {Tfem.x.array.max()}')
-        return Tfem
+        return sol
         log.close()
     
         if postprocess==True:
@@ -175,10 +181,10 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs,h,bc,Ti,Tref,dt,tf,dir,coo
     bilinear_form,linear_form = get_forms()
     A,b = create_systems(bilinear_form,linear_form)
     solver = get_solver(A)
-    Tfem=transient_solver(b,bilinear_form,linear_form,bc,solver,T_old,dt,tf)
+    sol=transient_solver(b,bilinear_form,linear_form,bc,solver,T_old,dt,tf,Qs)
 
 
-    return Tfem
+    return sol
 
 def export_field_mesh(field,msh,name,dir):
     msh = msh[0]
