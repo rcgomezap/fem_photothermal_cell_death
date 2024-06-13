@@ -21,7 +21,8 @@ with open(f'{dir}/fenicsx/parameters.json', 'r') as file:
 
 # print(parameters)
 
-alpha = parameters['alpha']
+column = parameters['column']
+sheet = parameters['sheet']
 
 # REGION PROPERTIES
 regions = {
@@ -60,7 +61,7 @@ mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 
 # Interpolate alpha
-mu_a.x.array[:] = interp_alpha(coords,dir)
+mu_a.x.array[:] = interp_alpha(coords,dir,column,sheet)
 
 
 
@@ -78,10 +79,7 @@ h = 5
 directory = dir
 
 def Qs_func(t):
-        if t <= 900:
-                return Qs
-        else:
-                return Function(V)
+        return Qs
 
 
 sol = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
@@ -95,10 +93,11 @@ sol = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
 # print(len(sol))
 # export_T(sol[0][1],dir)
 
-T_prom = np.zeros((len(sol),2))
+T_prom = np.zeros((len(sol),3))
 for i in range(len(sol)):
         T_prom[i,0] = sol[i][0]
-        T_prom[i,1] = assemble_scalar(form(sol[i][1]*dx))/assemble_scalar(form(1*dx))
+        T_prom[i,1] = assemble_scalar(form(sol[i][1]*dx(10)))/assemble_scalar(form(1*dx(10)))
+        T_prom[i,2] = assemble_scalar(form(sol[i][1]*dx(11)))/assemble_scalar(form(1*dx(11)))
         # print(sol[i][0],T_prom[i,1])
 
 np.save(f"{dir}/T_prom.npy",T_prom)

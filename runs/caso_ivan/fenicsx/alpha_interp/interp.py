@@ -5,12 +5,12 @@ from scipy.interpolate import CloughTocher2DInterpolator
 from scipy.interpolate import NearestNDInterpolator
 from scipy.interpolate import LinearNDInterpolator
 
-def interp_alpha(list_cells,dir_):
+def interp_alpha(list_cells,dir_,column,sheet):
     graficar = False
 
     # read file ''ResIvan27012023.xlsx'' with pandas
     # df = pd.read_excel('Resultados_de_simulaciones.xlsx', sheet_name='Total concentration (gr.ml-1)', header=1)
-    df = pd.read_excel(f'{dir_}/data/Resultados de simulaciones de electroporación 03_14_2024.xlsx', sheet_name='Total conc. (gr.ml-1) 40 mV', header=1)
+    df = pd.read_excel(f'{dir_}/data/Resultados de simulaciones de electroporación 03_14_2024.xlsx', sheet_name=sheet, header=1)
     # convert column 1 of df to numpy array
     #Q = 0.214
     Q = 0.245
@@ -18,7 +18,7 @@ def interp_alpha(list_cells,dir_):
 
     xdata = df.iloc[:,0].to_numpy()
     ydata = df.iloc[:,1].to_numpy()
-    cdata = df.iloc[:,10].to_numpy()
+    cdata = df.iloc[:,column].to_numpy()
     cdata = cdata * 1e3
     rau=19300
     fv=cdata/rau

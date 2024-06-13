@@ -5,9 +5,10 @@ from FEM.bridge.run_fenicsx import run_simultation
 import json
 import numpy as np
 
-def run(alpha):
+def run(column,sheet):
     params = {
-        "alpha": alpha
+        "column": column,
+        "sheet": sheet
     }
     with open('fenicsx/parameters.json', 'w') as file:
         json.dump(params, file)

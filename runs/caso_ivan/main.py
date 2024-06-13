@@ -1,8 +1,11 @@
-# from fenicsx_args import run
-import sys
-sys.path.append('../../')
-from FEM.bridge.run_fenicsx import mesh_convert
-from FEM.bridge.run_fenicsx import run_simultation
+from fenicsx_args import run
+import matplotlib.pyplot as plt
 
+column = 10
+sheet = 'Total conc. (gr.ml-1) 40 mV'
 
-run_simultation()
+sol = run(column,sheet)
+
+plt.plot(sol[:,0],sol[:,1])
+plt.plot(sol[:,0],sol[:,2])
+plt.show()

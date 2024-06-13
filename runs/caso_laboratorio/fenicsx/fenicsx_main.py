@@ -20,6 +20,7 @@ with open(f'{dir}/fenicsx/parameters.json', 'r') as file:
 # print(parameters)
 
 alpha = parameters['alpha']
+tf = parameters['tf']
 
 # REGION PROPERTIES
 regions = {
@@ -67,7 +68,7 @@ export_field_mesh(phi,mesh,"phi",dir)
 # print(regions_bc)
 
 h = Function(V)
-h_1 = 28
+h_1 = 10
 r=3.5e-3 # Radio interno del cilindro
 R = r + 1e-3 # Radio externo del cilindro
 Ka = 0.2 # Conductividad térmica del acrilico
@@ -93,7 +94,7 @@ def Qs_func(t):
 sol = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
         dx = dx,k = k,rho = rho,c = c,w = w,
         Qmet = Qmet,blood = blood,Qs_func = Qs_func,h = h,
-        bc = bc,Ti = 0,Tref = 0,dt = 10,tf = 1800, 
+        bc = bc,Ti = 0,Tref = 0,dt = 10,tf = tf, 
         dir = directory, coords=coords,
         regions_bc=regions_bc,
         postprocess=False)
