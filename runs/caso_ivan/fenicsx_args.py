@@ -15,5 +15,5 @@ def run(column,sheet):
 
     run_simultation()
 
-    sol = np.load('T_prom.npy')
+    sol = np.load('coords_sol.npy')
     return sol

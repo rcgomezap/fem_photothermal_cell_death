@@ -98,14 +98,22 @@ sol = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
 # print(len(sol))
 # export_T(sol[0][1],dir)
 
-T_prom = np.zeros((len(sol),3))
-for i in range(len(sol)):
-        T_prom[i,0] = sol[i][0]
-        T_prom[i,1] = assemble_scalar(form(sol[i][1]*dx(10)))/assemble_scalar(form(1*dx(10)))
-        T_prom[i,2] = assemble_scalar(form(sol[i][1]*dx(11)))/assemble_scalar(form(1*dx(11)))
-        # print(sol[i][0],T_prom[i,1])
+# T_prom = np.zeros((len(sol),3))
+# for i in range(len(sol)):
+#         T_prom[i,0] = sol[i][0]
+#         T_prom[i,1] = assemble_scalar(form(sol[i][1]*dx(10)))/assemble_scalar(form(1*dx(10)))
+#         T_prom[i,2] = assemble_scalar(form(sol[i][1]*dx(11)))/assemble_scalar(form(1*dx(11)))
+#         # print(sol[i][0],T_prom[i,1])
 
-np.save(f"{dir}/T_prom.npy",T_prom)
+# np.save(f"{dir}/T_prom.npy",T_prom)
+
+coords_sol = np.copy(coords)
+for i in range(len(sol)):
+        T = sol[i][1].x.array
+        # print(coords.shape)
+        coords_sol = np.concatenate((coords_sol, T.reshape(T.shape[0],1)),axis=1)
+
+np.save(f"{dir}/coords_sol.npy",coords_sol)
 
 # print(sol[0][1].x.array == sol[1][1].x.array)
 # T_int = assemble_scalar(form(sol[100][1]*dx))
