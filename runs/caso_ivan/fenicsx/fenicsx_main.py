@@ -3,6 +3,7 @@ import sys
 
 
 from ufl import ds, dx
+import ufl
 
 from FEM.fenicsx.src.material_classes import Material_Bioheat, Material_Bioheat_Blood, Material_Optical
 from FEM.fenicsx.src.fem_funcs import load_mesh, scale_mesh, locate_dofs, get_fem_objects, set_dofs_properties, set_dirichlet_bcs, solve_FEM, export_field_mesh
@@ -61,12 +62,16 @@ mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 
 # Interpolate alpha
-mu_a.x.array[:] = interp_alpha(coords,dir,column,sheet)
+# mu_a.x.array[:] = interp_alpha(coords,dir,column,sheet)
+x =  ufl.SpatialCoordinate(mesh[0])
+# mu_a.interpolate(lambda x: (0.01 - x[1]))
+mu_a.interpolate(lambda x: interp_alpha(x,dir,column,sheet))
+# print(mu_a.x.array.max())
 
 
 
 intensity = 5000
-Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity)
+Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity,R=0.01)
 
 export_field_mesh(mu_a,mesh,"mua",dir)
 export_field_mesh(Qs,mesh,"Qs",dir)

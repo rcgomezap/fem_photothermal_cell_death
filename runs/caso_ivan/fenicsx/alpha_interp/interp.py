@@ -7,6 +7,8 @@ from scipy.interpolate import LinearNDInterpolator
 
 def interp_alpha(list_cells,dir_,column,sheet):
     graficar = False
+    print(f"list cells size: {len(list_cells[0])}")
+    print(f"xmax: {np.max(list_cells[0])}")
 
     # read file ''ResIvan27012023.xlsx'' with pandas
     # df = pd.read_excel('Resultados_de_simulaciones.xlsx', sheet_name='Total concentration (gr.ml-1)', header=1)
@@ -29,6 +31,7 @@ def interp_alpha(list_cells,dir_,column,sheet):
 
     xdata = xdata/maxx/1000*20
     ydata = ydata/maxy/1000*10
+    print('Interpolating alpha')
     interp_Clough = CloughTocher2DInterpolator(list(zip(xdata, ydata)), alpha)
     interp_Nearest = NearestNDInterpolator(list(zip(xdata, ydata)), alpha)
     #z = np.zeros(len(X))
@@ -42,20 +45,20 @@ def interp_alpha(list_cells,dir_,column,sheet):
     #         if str(z[i]) == 'nan':
     #             print('Error: z[i] is nan')
     list_alpha=[]
-    for i in range(len(list_cells)):
-        x = list_cells[i][0]
-        y = list_cells[i][1]
+    for i in range(len(list_cells[0])):
+        x = list_cells[0][i]
+        y = list_cells[1][i]
         # Percentage process
         # print('Proceso interpolacion: ', str(i/len(list_cells)*100) + '%')
         valor_alpha = interp_Clough(x,y)
         if str(valor_alpha) == 'nan':
             valor_alpha = interp_Nearest(x,y)
-            print('InterpNear')
-            print(valor_alpha)
+            # print('InterpNear')
+            # print(valor_alpha)
             if str(valor_alpha) == 'nan':
                 print('Error: valor_alpha is nan')
         list_alpha.append(valor_alpha)
-
+    print(np.array(list_alpha).shape)
     if graficar == True:
         X = np.linspace(min(xdata), max(xdata),200)
         Y = np.linspace(min(ydata), max(ydata),100)

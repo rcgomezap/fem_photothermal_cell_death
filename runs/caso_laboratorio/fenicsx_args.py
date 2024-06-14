@@ -19,3 +19,6 @@ def run(conc,tf):
 
     sol = np.load('T_prom.npy')
     return sol
+
+if __name__ == '__main__':
+    mesh_convert()
