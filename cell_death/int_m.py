@@ -5,11 +5,11 @@ from scipy.interpolate import CloughTocher2DInterpolator
 from scipy.interpolate import NearestNDInterpolator
 #from scipy.interpolate import LinearNDInterpolator
 
-def interp_m(list_cells):
+def interp_m(list_cells,file,sheet):
     graficar = False 
 
     # read file ''ResIvan27012023.xlsx'' with pandas
-    df = pd.read_excel('Resultados_de_simulaciones.xlsx', sheet_name='Cell Death', header=0)
+    df = pd.read_excel(file, sheet_name=sheet, header=0)
     # convert column 1 of df to numpy array
     #Q = 0.214
     Q = 0.245

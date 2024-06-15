@@ -6,16 +6,16 @@ Created on Wed Aug  2 18:52:32 2023
 """
 import numpy as np
 import matplotlib.pylab as plt
-from scipy import integrate
+# from scipy import integrate
 from scipy.linalg import eigvals, expm_cond
 from scipy.integrate import solve_ivp
 from scipy.linalg import lu_factor, lu_solve
 from scipy.interpolate import interp1d
-import RBF as rbf
-import scipy
-import pospro as pp
+import cell_death.RBF as rbf
+# import scipy
+import cell_death.pospro as pp
 import pandas as pd
-import int_m as im
+import cell_death.int_m as im
 
 #CREACIÓN DE LA FUNCIÓN INTEGRADORA 
 fv=1 #mLnp/mLtotales
@@ -109,7 +109,7 @@ def temp(t_max,x_max,ua,us,N,dt):
         print(t)
     return Tsol,x
 
-def ONeill (trbft,x,t_max,dt,fi,i):
+def ONeill (trbft,x,t_max,dt,fi,i,file,sheet):
     N=np.shape(trbft)[0]
     kf=np.zeros(N)
     T=np.zeros(N)
@@ -133,7 +133,7 @@ def ONeill (trbft,x,t_max,dt,fi,i):
                 y[i]=0.9999
                 y[i+N]=1-0.9999
         v=-y[:N]-y[N:]+1
-        for i in range (N):
+        for i in range(N):
             T[i]=fit[i](t)
             kf[i]=kfbarra*np.exp(T[i]/Tk)*(1-y[i])
             dy[i]=-kf[i]*y[i]+Kb*v[i]
@@ -141,7 +141,7 @@ def ONeill (trbft,x,t_max,dt,fi,i):
         print('tiempo ',t)
         return dy
 
-    nuevo_vector=im.interp_m(x)
+    nuevo_vector=im.interp_m(x,file,sheet)
     nuevo_vector=np.array(nuevo_vector)
     print(N)
     y0=np.ones(2*N)
