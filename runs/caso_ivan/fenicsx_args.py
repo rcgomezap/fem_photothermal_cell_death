@@ -23,4 +23,5 @@ def run(column,sheet):
     run_simultation()
 
     sol = np.load('coords_sol.npy')
+    clean_results()
     return sol
