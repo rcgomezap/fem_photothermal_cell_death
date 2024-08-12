@@ -8,7 +8,7 @@ import ufl
 from FEM.fenicsx.src.material_classes import Material_Bioheat, Material_Bioheat_Blood, Material_Optical
 from FEM.fenicsx.src.fem_funcs import load_mesh, scale_mesh, locate_dofs, get_fem_objects, set_dofs_properties, set_dirichlet_bcs, solve_FEM, export_field_mesh
 from FEM.fenicsx.src.RT.funcs import set_dofs_optical_properties
-# from FEM.fenicsx.src.RT.welch.FR import welch_fr
+from FEM.fenicsx.src.RT.welch.FR import welch_fr
 from FEM.fenicsx.src.RT.beer_lambert.beer_lambert import beer_Qs
 # from FEM.bridge.export_data import export_T
 from alpha_interp.interp import interp_alpha
@@ -28,11 +28,11 @@ sheet = parameters['sheet']
 # REGION PROPERTIES
 regions = {
         'tumor': [10, #GMSH physical tag
-                  Material_Bioheat(k = 0.59, rho = 1000, c = 4200, w = 0, Qmet = 1091),
-                  Material_Optical(mu_a=0, mu_s=50, g=0.9)],
+                  Material_Bioheat(k = 0.55, rho = 1000, c = 4200, w = 0.91e-3, Qmet = 1091),
+                  Material_Optical(mu_a=25.42098445595855, mu_s=50, g=0.)],
         'tejido': [11, #GMSH physical tag
-                   Material_Bioheat(k = 0.59, rho = 1000, c = 4200, w = 0, Qmet = 1091),
-                   Material_Optical(mu_a=0, mu_s=50, g=0.9)],
+                   Material_Bioheat(k = 0.5, rho = 1000, c = 4200, w = 1e-3, Qmet = 1091),
+                   Material_Optical(mu_a=2, mu_s=650, g=0.)],
         }
 regions_bc = {
         'dirichlet': [13],
@@ -40,7 +40,7 @@ regions_bc = {
         }
 
 #REGION PROPERTIES
-blood = Material_Bioheat_Blood(T = 37, rho = 1090, cp = 4200)
+blood = Material_Bioheat_Blood(T = 37, rho = 1000, cp = 4200)
 
 T_dirichlet = 37
 
@@ -68,7 +68,11 @@ x =  ufl.SpatialCoordinate(mesh[0])
 mu_a.interpolate(lambda x: interp_alpha(x,dir,column,sheet))
 # print(mu_a.x.array.max())
 
-
+# ymax = 0.01
+# I0 = 20000
+# sigma = 0.00064026
+# phi = welch_fr(V,mesh,mu_a,mu_s,ymax,sigma, I0)
+# Qs = mu_a*phi
 
 intensity = 5000
 Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity,R=0.01)
@@ -90,7 +94,7 @@ def Qs_func(t):
 sol = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
         dx = dx,k = k,rho = rho,c = c,w = w,
         Qmet = Qmet,blood = blood,Qs_func = Qs_func,h = h,
-        bc = bc,Ti = 35,Tref = 0,dt = 10,tf = 1800, 
+        bc = bc,Ti = 37,Tref = 25,dt = 10,tf = 1800, 
         dir = directory, coords=coords,
         regions_bc=regions_bc,
         postprocess=False)

@@ -171,11 +171,11 @@ def solve_FEM(V,msh,T,v,ds,dx,k,rho,c,w,Qmet,blood,Qs_func,h,bc,Ti,Tref,dt,tf,di
                 print(f'Tmin = {Tfem.x.array.min()}')
                 print(f'Tmax = {Tfem.x.array.max()}')
         return sol
-        log.close()
+        # log.close()
     
-        if postprocess==True:
-            postprocess_funcs.write_max_temperature(Tfem)
-            postprocess_funcs.write_max_temperature_position(Tfem,coords)
+        # if postprocess==True:
+        #     postprocess_funcs.write_max_temperature(Tfem)
+        #     postprocess_funcs.write_max_temperature_position(Tfem,coords)
         
 
     bilinear_form,linear_form = get_forms()
