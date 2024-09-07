@@ -1,9 +1,6 @@
 import meshio
-import sys
-
 # Read mesh
-dir_msh = sys.argv[1]
-msh = meshio.read(f"{dir_msh}/fenicsx/mesh/msh/mesh.msh")
+msh = meshio.read("FEM/fenicsx/mesh/msh/malla.msh")
 
 
 def create_mesh(mesh, cell_type, prune_z=False):
@@ -16,6 +13,5 @@ def create_mesh(mesh, cell_type, prune_z=False):
 
 triangle_mesh = create_mesh(msh, "triangle")
 line_mesh = create_mesh(msh, "line")
-meshio.write(f"{dir_msh}/fenicsx/mesh/xdmf/mesh_triangle.xdmf", triangle_mesh)
-meshio.write(f"{dir_msh}/fenicsx/mesh/xdmf/mesh_line.xdmf", line_mesh)
-print("Mesh converted to xdmf format")
+meshio.write("FEM/fenicsx/mesh/xdmf/mesh_triangle.xdmf", triangle_mesh)
+meshio.write("FEM/fenicsx/mesh/xdmf/mesh_line.xdmf", line_mesh)

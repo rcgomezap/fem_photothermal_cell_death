@@ -14,10 +14,3 @@ def run_simultation(): # Genera la malla y corre la simulación
 
 def mesh_convert():
     su.run(f"docker run --rm -it -v {root}:/root dolfinx_v0.6.0:rc bash -c 'python3 FEM/fenicsx/mesh/mesh_convert.py {dir}' | tee log_mesh_convert.txt", shell=True)
-
-# run_simultation("runs/validacion_soni")
-# print("Hello World")
-
-
-
-

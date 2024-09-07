@@ -28,7 +28,7 @@ tf = parameters['tf']
 regions = {
         'tumor': [7, #GMSH physical tag
                   Material_Bioheat(k = 0.59, rho = 1000, c = 4200, w = 0, Qmet = 0),
-                  Material_Optical(mu_a=alpha, mu_s=1, g=0.9)]
+                  Material_Optical(mu_a=alpha, mu_s=0.01, g=0.9)]
         }
 regions_bc = {
         # 'dirichlet': [],
@@ -55,9 +55,9 @@ bc=[]
 mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 
 # SOURCE TERM
-ymax = 7.8e-3
-I0 = 83100
-sigma = 0.00062505
+ymax = 2e-3
+I0 = 30520
+sigma = 0.0006402
 phi = welch_fr(V,mesh,mu_a,mu_s,ymax,sigma, I0)
 Qs = mu_a*phi
 
@@ -70,7 +70,7 @@ export_field_mesh(phi,mesh,"phi",dir)
 # print(regions_bc)
 
 h = Function(V)
-h_1 = 10
+h_1 = 5
 r=3.5e-3 # Radio interno del cilindro
 R = r + 1e-3 # Radio externo del cilindro
 Ka = 0.2 # Conductividad térmica del acrilico
@@ -87,16 +87,16 @@ for i in range(len(h.x.array)):
 directory = dir
 
 def Qs_func(t):
-        if t <= 10:
+        if t <= 900:
                 return Qs
         else:
                 return Function(V)
 
 
 sol = bioheat_wave.solve(V = V,msh = mesh[0],T = T,v = v,ds = ds,
-        dx = dx,tau=1000,k = k,rho = rho,c = c,w = w,
+        dx = dx,tau=20,k = k,rho = rho,c = c,w = w,
         Qmet = Qmet,blood = blood,Qs_func = Qs_func,h = h,
-        bc = bc,Ti = 0,Tref = 0,dt = 1,tf = tf, 
+        bc = bc,Ti = 0,Tref = 0,dt = 5,tf = tf, 
         dir = directory, coords=coords,
         regions_bc=regions_bc,
         postprocess=False)
