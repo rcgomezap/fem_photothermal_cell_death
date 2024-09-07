@@ -50,16 +50,17 @@ def get_dp1_optical_properties(V,mu_a,mu_s,g):
 def solve_dP1(V,dx,ds,v,mueff2,mus_ast,mutr_func,mut_ast,g_ast,phic,mesh,bc=[]):
     phid = ufl.TrialFunction(V)
     phi = Function(V)
+    r = ufl.SpatialCoordinate(mesh)[0]
 
     A = lambda n: -0.13755*n**3 + 4.3390*n**2 - 4.90466*n + 1.6896
     h = 2/3/mutr_func
 
     n = ufl.FacetNormal(mesh)
     def get_forms(A1,A2):
-        F = (inner(grad(phid), grad(v)) * dx #laplaciano
-            + mueff2*phid*v* dx #Absorcion
-            - 3*mus_ast*(mutr_func+mut_ast*g_ast)*phic*v*dx #Dispersion de luz colimada
-            # + v/h/A1*(phid + 3*h*A1*g_ast*mus_ast*phic) * ds(30)
+        F = (inner(grad(phid), grad(v)) *r* dx #laplaciano
+            + mueff2*phid*v*r* dx #Absorcion
+            - 3*mus_ast*(mutr_func+mut_ast*g_ast)*phic*v*r*dx #Dispersion de luz colimada
+            + v/h/A1*(phid + 3*h*A1*g_ast*mus_ast*phic) *r* ds # TODO
             # + v/h/A1*(phid + 3*h*A1*g_ast*mus_ast*phic* ufl.dot(ufl.as_vector([0.0,1.0,0.0]),n)) * ds(43)
             # + v/h/A2*(phid + 3*h*A2*g_ast*mus_ast*phic) * ds(31))
         )

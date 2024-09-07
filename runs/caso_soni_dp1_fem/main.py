@@ -8,8 +8,9 @@ import numpy as np
 
 import sys
 sys.path.append('../../')
-from FEM.bridge.run_fenicsx import run_simultation
+from FEM.bridge.run_fenicsx import run_simultation,mesh_convert
 
+mesh_convert()
 run_simultation()
 # T = np.load("T.npy")
 # print(T.max())

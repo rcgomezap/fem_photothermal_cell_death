@@ -44,14 +44,14 @@ export_field_mesh(mu_a,mesh,"mua",dir)
 intensity = 5000
 laser_radius = 10e-3
 power = intensity*np.pi*laser_radius**2 #W
-# Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity)
-phic,phid,phi,Qs = dp1_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power=power,laser_radius=laser_radius,laser_type="flat")
+Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity)
+# phic,phid,phi,Qs = dp1_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power=power,laser_radius=laser_radius,laser_type="flat")
 def Qs_func(t):
     return Qs
-export_field_mesh(Qs,mesh,"Qs",dir)
-export_field_mesh(phic,mesh,"phic",dir)
-export_field_mesh(phid,mesh,"phid",dir)
-export_field_mesh(phi,mesh,"phi",dir)
+# export_field_mesh(Qs,mesh,"Qs",dir)
+# export_field_mesh(phic,mesh,"phic",dir)
+# export_field_mesh(phid,mesh,"phid",dir)
+# export_field_mesh(phi,mesh,"phi",dir)
 # Qs=0
 
 # Qs = p1_get_heat_source(V,mesh,v,coords,convection_bc_dofs,tumor_dofs,tejido_dofs,epidermis_dofs,dx,ds,domain_tumor_optical,domain_tejido_optical,domain_epidermis_optical,power)

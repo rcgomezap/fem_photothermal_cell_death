@@ -1,5 +1,5 @@
 from fenicsx_args import run
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 
 column = 10

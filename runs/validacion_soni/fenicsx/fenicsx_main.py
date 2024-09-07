@@ -43,6 +43,8 @@ mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 export_field_mesh(mu_a,mesh,"mua",dir)
 intensity = 5000
 Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity)
+def Qs_func(t):
+    return Qs
 export_field_mesh(Qs,mesh,"Qs",dir)
 # Qs=0
 
@@ -51,9 +53,9 @@ export_field_mesh(Qs,mesh,"Qs",dir)
 directory = dir
 Tfem = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
         dx = dx,k = k,rho = rho,c = c,w = w,
-        Qmet = Qmet,blood = blood,Qs = Qs,h = 5,
-        bc = bc,Ti = 35,Tref = 22.9,dt = 1,tf = 100, 
+        Qmet = Qmet,blood = blood,Qs_func = Qs_func,h = 5,
+        bc = bc,Ti = 35,Tref = 22.9,dt = 1,tf = 300, 
         dir = directory, coords=coords,
         regions_bc=regions_bc,
         postprocess=False)
-export_T(Tfem,dir)
+# export_T(Tfem,dir)

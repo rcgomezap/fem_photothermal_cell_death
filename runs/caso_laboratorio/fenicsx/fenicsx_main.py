@@ -2,7 +2,7 @@ import numpy as np
 import sys
 
 
-from ufl import ds, dx
+from ufl import ds, dx,SpatialCoordinate
 
 from FEM.fenicsx.src.material_classes import Material_Bioheat, Material_Bioheat_Blood, Material_Optical
 from FEM.fenicsx.src.fem_funcs import load_mesh, scale_mesh, locate_dofs, get_fem_objects, set_dofs_properties, set_dirichlet_bcs, solve_FEM, export_field_mesh
@@ -101,11 +101,11 @@ sol = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
 
 # print(len(sol))
 # export_T(sol[0][1],dir)
-
+r =  SpatialCoordinate(mesh[0])[0]
 T_prom = np.zeros((len(sol),2))
 for i in range(len(sol)):
         T_prom[i,0] = sol[i][0]
-        T_prom[i,1] = assemble_scalar(form(sol[i][1]*dx))/assemble_scalar(form(1*dx))
+        T_prom[i,1] = assemble_scalar(form(sol[i][1]*r*dx))/assemble_scalar(form(r*dx))
         # print(sol[i][0],T_prom[i,1])
 
 np.save(f"{dir}/T_prom.npy",T_prom)

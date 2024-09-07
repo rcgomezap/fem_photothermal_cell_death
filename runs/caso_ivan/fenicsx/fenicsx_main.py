@@ -65,7 +65,7 @@ mu_a, mu_s, g = set_dofs_optical_properties(V,regions)
 # mu_a.x.array[:] = interp_alpha(coords,dir,column,sheet)
 x =  ufl.SpatialCoordinate(mesh[0])
 # mu_a.interpolate(lambda x: (0.01 - x[1]))
-mu_a.interpolate(lambda x: interp_alpha(x,dir,column,sheet))
+# mu_a.interpolate(lambda x: interp_alpha(x,dir,column,sheet))
 # print(mu_a.x.array.max())
 
 # ymax = 0.01
@@ -74,7 +74,8 @@ mu_a.interpolate(lambda x: interp_alpha(x,dir,column,sheet))
 # phi = welch_fr(V,mesh,mu_a,mu_s,ymax,sigma, I0)
 # Qs = mu_a*phi
 
-intensity = 5000
+# intensity = 5000
+intensity = 10000
 Qs = beer_Qs(V,mesh,mu_a,mu_s,intensity,R=0.01)
 
 export_field_mesh(mu_a,mesh,"mua",dir)

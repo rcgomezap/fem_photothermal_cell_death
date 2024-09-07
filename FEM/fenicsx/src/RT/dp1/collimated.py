@@ -52,31 +52,31 @@ def collimated(V,coords,MaxY,mu_a,mu_s,g,power,laser_radius,laser_type):
         y_global = maxy - y
         return -interp_mut_ast(x,y_global)*phi
     
-    print('Starting loop for collimated radiation calculation')
-    for i in range(len(mus_ast.x.array)):
-        x,z = coords[i,0],coords[i,2]
-        yf = MaxY - coords[i,1]
+    def calculate_phic(x):
+        num_quadratures = len(x[0,:])
+        print(f'Starting loop for collimated radiation calculation with {num_quadratures} quadratures')
+        phic_ = np.zeros(len(x[0,:]))
+        for i in range(num_quadratures):
+            xi,zi = x[0,i],x[2,i]
+            yf = MaxY - x[1,i]
 
-        f = lambda y,phi: dphicdy(x,y,MaxY,phi)
-        if laser_type == "flat":
-            fluence_rate = get_fluence_rate_flat(power,laser_radius,np.sqrt(x**2+z**2))
-        else:
-            fluence_rate = get_fluence_rate_gaussian(power,laser_radius,np.sqrt(x**2+z**2))
+            f = lambda y,phi: dphicdy(xi,y,MaxY,phi)
+            if laser_type == "flat":
+                fluence_rate = get_fluence_rate_flat(power,laser_radius,np.sqrt(xi**2+zi**2))
+            else:
+                fluence_rate = get_fluence_rate_gaussian(power,laser_radius,np.sqrt(x**2+zi**2))
 
-        if yf != 0:
-            sol = solve_ivp(f, [0, yf], [fluence_rate], method='RK45',t_eval=[yf])
-            phic.x.array[i] = sol.y[0,0]
-        else:
-            phic.x.array[i] = fluence_rate
-        if i%1000 == 0:
-            print(f'Calculating Collimated Radiation: {i*100/len(mus_ast.x.array)} %')
-    # phic.x.array[:]*=fluence_rate
+            if yf != 0:
+                sol = solve_ivp(f, [0, yf], [fluence_rate], method='RK45',t_eval=[yf])
+                phic_[i] = sol.y[0,0]
+            else:
+                phic_[i] = fluence_rate
+            if i%1000 == 0:
+                print(f'Calculating Collimated Radiation: {i*100/num_quadratures} %')
+        # phic.x.array[:]*=fluence_rate
+        return phic_
 
 
-    # collimated = Function(V)
+    phic = Function(V)
+    phic.interpolate(calculate_phic)
     return phic
-
-
-
-
-
