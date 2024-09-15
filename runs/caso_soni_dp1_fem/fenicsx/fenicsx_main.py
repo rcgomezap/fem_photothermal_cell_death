@@ -19,10 +19,10 @@ with open(f'{dir}/fenicsx/parameters.json', 'r') as file:
 # REGION PROPERTIES
 regions = {
         'tumor': [10, #GMSH physical tag
-                  Material_Bioheat(k = 0.59, rho = 1000, c = 4200, w = 0, Qmet = 1091),
+                  Material_Bioheat(k = 0.55, rho = 1100, c = 4200, w = 0.91e-3, Qmet = 1091),
                   Material_Optical(mu_a=params["mu_a"], mu_s=params["mu_s"], g=0.9)],
         'tejido': [11, #GMSH physical tag
-                   Material_Bioheat(k = 0.59, rho = 1000, c = 4200, w = 0, Qmet = 1091),
+                   Material_Bioheat(k = 0.55, rho = 1000, c = 4200, w = 1e-3, Qmet = 1091),
                    Material_Optical(mu_a=0, mu_s=176, g=0.9)],
         }
 regions_bc = {
@@ -76,7 +76,7 @@ directory = dir
 Tfem = solve_FEM(V = V,msh = mesh[0],T = T,v = v,ds = ds,
         dx = dx,k = k,rho = rho,c = c,w = w,
         Qmet = Qmet,blood = blood,Qs_func = Qs_func,h = 5,
-        bc = bc,Ti = 35,Tref = 22.9,dt = 1,tf = 300, 
+        bc = bc,Ti = 35,Tref = 25,dt = 1,tf = 300, 
         dir = directory, coords=coords,
         regions_bc=regions_bc,
         postprocess=False)
