@@ -9,6 +9,7 @@ from FEM.fenicsx.src.fem_funcs import load_mesh, scale_mesh, locate_dofs, get_fe
 from FEM.fenicsx.src.RT.funcs import set_dofs_optical_properties
 from FEM.fenicsx.src.RT.beer_lambert.beer_lambert import beer_Qs
 from FEM.fenicsx.src.RT.dp1.dp1 import dp1_get_heat_source
+from FEM.fenicsx.src.RT.sda.sda import sda_get_heat_source
 from dolfinx.fem import Function,assemble_scalar
 from MC.MC_interp import MC_interp
 
@@ -28,6 +29,7 @@ regions = {
 regions_bc = {
         'dirichlet': [13],
         'convection': [14],
+        'laser': [14],
         }
 
 #REGION PROPERTIES
@@ -61,6 +63,9 @@ elif params["rt"] == "mc":
         phi.interpolate(mc_func)
         Qs = mu_a*phi
         export_field_mesh(phi,mesh,"phi_mc",dir)
+elif params["rt"] == "sda":
+        phid,Qs = sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius)
+        export_field_mesh(phid,mesh,"phid_sda",dir)
 
 def Qs_func(t):
     return Qs
