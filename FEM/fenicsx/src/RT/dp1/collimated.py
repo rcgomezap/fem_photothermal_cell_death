@@ -64,7 +64,10 @@ def collimated(V,coords,MaxY,mu_a,mu_s,g,power,laser_radius,laser_type):
             if laser_type == "flat":
                 fluence_rate = get_fluence_rate_flat(power,laser_radius,np.sqrt(xi**2+zi**2))
             else:
-                fluence_rate = get_fluence_rate_gaussian(power,laser_radius,np.sqrt(x**2+zi**2))
+                # fluence_rate = get_fluence_rate_gaussian(power,laser_radius,np.sqrt(xi**2+zi**2))
+                fluence_rate = get_fluence_rate_gaussian(power,laser_radius,xi)
+                # if np.isclose(xi,0):
+                    # print(f"FLUENCE RATE {fluence_rate}")
 
             if yf != 0:
                 sol = solve_ivp(f, [0, yf], [fluence_rate], method='RK45',t_eval=[yf])
@@ -79,4 +82,5 @@ def collimated(V,coords,MaxY,mu_a,mu_s,g,power,laser_radius,laser_type):
 
     phic = Function(V)
     phic.interpolate(calculate_phic)
+    # print(phic.x.array.max())
     return phic

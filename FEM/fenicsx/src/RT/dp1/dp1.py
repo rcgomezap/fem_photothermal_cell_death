@@ -88,7 +88,10 @@ def solve_dP1(V,dx,ds,v,mueff2,mus_ast,mutr_func,mut_ast,g_ast,phic,mesh,bc=[]):
 
 
 def dp1_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius,laser_type):
-    MaxY = np.max(coords[1])
+    MaxY = np.max(coords[:,1])
+    # print(coords.shape)
+    # print(f"MaxY: {MaxY}")
+    # MaxY = 0.04
     mu_a,mu_s,g = set_dofs_optical_properties(V,regions)
     phic = collimated(V,coords,MaxY,mu_a,mu_s,g,power,laser_radius,laser_type)
     

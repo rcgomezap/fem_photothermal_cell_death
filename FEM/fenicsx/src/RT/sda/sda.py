@@ -4,6 +4,7 @@ from dolfinx import fem
 from dolfinx.fem import Function,dirichletbc
 from ufl import grad, inner
 from FEM.fenicsx.src.RT.dp1.dp1 import set_dofs_optical_properties
+from FEM.fenicsx.src.RT.dp1.collimated import get_fluence_rate_gaussian
 
 def get_diffussivity(V,mu_a,mu_s,g):
     # Porpiedades opticas
@@ -27,11 +28,17 @@ def set_laser_dofs(coords,surface_dofs,laser_radius):
 
     return laser_dofs
 
-def set_laser_function(V,coords,laser_dofs,laser_intensity):
+
+def set_laser_function(V,coords,laser_dofs,power,laser_radius,laser_type):
     la = Function(V)
-    for i in range(len(coords)):
-        if i in laser_dofs:
-            la.x.array[i] = laser_intensity
+    if laser_type == "flat":
+        laser_intensity = power/np.pi/laser_radius**2
+        for i in range(len(coords)):
+            if i in laser_dofs:
+                la.x.array[i] = laser_intensity
+    elif laser_type == "gaussian":
+        func_gaussian = lambda x: get_fluence_rate_gaussian(power,laser_radius,x[0,:])
+        la.interpolate(func_gaussian)
     return la
 
 def get_dirichlet_bc(V,laser_dofs,laser_intensity):
@@ -68,16 +75,14 @@ def solve_p1(V,dx,ds,v,D,mu_a,P0,bc=[]):
     phid = solve(a,L,bc)
     return phid
 
-def sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius):
+def sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius,laser_type):
 
-    laser_intensity = power/np.pi/laser_radius**2
-    
     mu_a,mu_s,g = set_dofs_optical_properties(V,regions)
     D = get_diffussivity(V,mu_a,mu_s,g)
     laser_dofs = set_laser_dofs(coords,regions_bc["laser"][1],laser_radius)
-    P0_func = set_laser_function(V,coords,laser_dofs,laser_intensity)
+    P0_func = set_laser_function(V,coords,laser_dofs,power,laser_radius,laser_type)
 
-    bcs = get_dirichlet_bc(V,laser_dofs,laser_intensity)
+    # bcs = get_dirichlet_bc(V,laser_dofs,laser_intensity)
     phid = solve_p1(V,dx,ds,v,D,mu_a,P0=P0_func,bc=[])
     Qs = Function(V)
     Qs.x.array[:] = phid.x.array[:]*mu_a.x.array[:]
