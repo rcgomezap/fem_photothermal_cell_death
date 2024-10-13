@@ -61,6 +61,8 @@ elif params["rt"] == "mc":
 elif params["rt"] == "sda":
         phid,Qs = sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius,laser_type="gaussian")
         export_field_mesh(phid,mesh,"phid_sda",dir)
+else:
+      Qs = Function(V)
 
 def Qs_func(t):
     return Qs

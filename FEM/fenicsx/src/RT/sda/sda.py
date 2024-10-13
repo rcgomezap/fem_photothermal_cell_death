@@ -39,6 +39,9 @@ def set_laser_function(V,coords,laser_dofs,power,laser_radius,laser_type):
     elif laser_type == "gaussian":
         func_gaussian = lambda x: get_fluence_rate_gaussian(power,laser_radius,x[0,:])
         la.interpolate(func_gaussian)
+        for i in range(len(coords)):
+            if i not in laser_dofs:
+                la.x.array[i] = 0
     return la
 
 def get_dirichlet_bc(V,laser_dofs,laser_intensity):
@@ -47,10 +50,12 @@ def get_dirichlet_bc(V,laser_dofs,laser_intensity):
     bcs = [dirichletbc(la, laser_dofs)]
     return bcs
 
-def solve_p1(V,dx,ds,v,D,mu_a,P0,bc=[]):
+def solve_p1(V,dx,ds,v,D,mu_a,mu_s,g,P0,bc=[]):
     phid = ufl.TrialFunction(V)
     r = ufl.SpatialCoordinate(V.mesh)[0]
     f = Function(V)
+    # mu_tr = 1/3/D
+    # S1 = mu_s*g/mu_tr*P0
     A = lambda n: -0.13755*n**3 + 4.3390*n**2 - 4.90466*n + 1.6896
     def get_forms(A):
         F = (D*inner(grad(phid), grad(v)) * r * dx #laplaciano
@@ -58,6 +63,8 @@ def solve_p1(V,dx,ds,v,D,mu_a,P0,bc=[]):
             - f*v*r*dx #Fuente
             # + (0.5/A1*phid)*v* r*ds
             - (2*P0 - phid/2)/A*v*r*ds
+            # - (S1 - phid/2/A)*v*r*ds
+            # - (2*P0-phid/2/A)*v*r*ds
         )
 
         a = ufl.lhs(F)
@@ -70,6 +77,7 @@ def solve_p1(V,dx,ds,v,D,mu_a,P0,bc=[]):
         uh = problem.solve()
         return uh
     A1 = A(1.33)
+    # print(A1)
     # A2 = A(1)
     a,L = get_forms(A1)
     phid = solve(a,L,bc)
@@ -83,7 +91,7 @@ def sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_rad
     P0_func = set_laser_function(V,coords,laser_dofs,power,laser_radius,laser_type)
 
     # bcs = get_dirichlet_bc(V,laser_dofs,laser_intensity)
-    phid = solve_p1(V,dx,ds,v,D,mu_a,P0=P0_func,bc=[])
+    phid = solve_p1(V,dx,ds,v,D,mu_a,mu_s,g,P0=P0_func,bc=[])
     Qs = Function(V)
     Qs.x.array[:] = phid.x.array[:]*mu_a.x.array[:]
     return phid,Qs
