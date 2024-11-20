@@ -121,9 +121,9 @@ def run_variable_properties(mu_ext,list_relations):
         json.dump(error,file,indent=6)
 
     plt.figure()
-    plot_errors(error["beer"],'r-o',"beer")
-    plot_errors(error["sda"],'g-o',"sda")
-    plot_errors(error["dp1"],'b-o',"dp1")
+    plot_errors(error["beer"],'r-o',"BL")
+    plot_errors(error["sda"],'b-o',"SDA")
+    plot_errors(error["dp1"],'g-o',r"$\delta P1$")
     plt.xscale("log")
     plt.xlabel("mu_s / mu_a")
     plt.ylabel("Error relativo (%)")

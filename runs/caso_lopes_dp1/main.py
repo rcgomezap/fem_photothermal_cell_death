@@ -148,11 +148,11 @@ def run_validation_case():
 
     plt.figure()
     plt.plot(lopes_experimental[:,0],lopes_experimental[:,1], "k--",label="Lopes et. al: Experimental")
-    plt.plot(lopes_diffusion[:,0],lopes_diffusion[:,1], "b--",label="Lopes et. al: diffusion")
+    plt.plot(lopes_diffusion[:,0],lopes_diffusion[:,1], "b--",label="Lopes et. al: SDA")
     plt.plot(lopes_mc[:,0],lopes_mc[:,1], "r--",label="Lopes et. al: MC")
-    plot_result_transient(result_mc,"Monte Carlo","r")
-    plot_result_transient(result_dp1,"Delta-P1","g")
-    plot_result_transient(result_sda,"Diffusion","b")
+    plot_result_transient(result_mc,"MC","r")
+    plot_result_transient(result_sda,"SDA","b")
+    plot_result_transient(result_dp1,r"$\delta P1$","g")
     plt.legend()
     plt.savefig("postprocessing/plots/validation.png",dpi=500)
     plt.show()
@@ -165,7 +165,7 @@ def run_concentration_study_case():
 
     def plot_errors(error_dict,filename):
         plt.figure()
-        plt.plot(concentrations*100,error_dict["gnp_region"]["dp1"], "g-o",label="Delta-P1")
+        plt.plot(concentrations*100,error_dict["gnp_region"]["dp1"], "g-o",label=r"$\delta P1$")
         plt.plot(concentrations*100,error_dict["gnp_region"]["sda"], "b-o",label="SDA")
         plt.plot(concentrations*100,error_dict["agar_region"]["dp1"], "g-v")
         plt.plot(concentrations*100,error_dict["agar_region"]["sda"], "b-v")

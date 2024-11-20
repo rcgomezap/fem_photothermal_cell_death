@@ -64,7 +64,7 @@ elif params["rt"] == "mc":
         Qs = mu_a*phi
         export_field_mesh(phi,mesh,"phi_mc",dir)
 elif params["rt"] == "sda":
-        phid,Qs = sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius)
+        phid,Qs = sda_get_heat_source(V,mesh,dx,ds,v,coords,regions_bc,regions,power,laser_radius,"flat")
         export_field_mesh(phid,mesh,"phid_sda",dir)
 
 def Qs_func(t):
