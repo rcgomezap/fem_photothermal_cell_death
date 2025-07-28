@@ -92,16 +92,12 @@ def main():
     try:
         gmsh_cmd = [args.gmsh_executable, '-2', str(output_geo_path), '-o', str(output_msh_path)]
         print(f"Executing: {' '.join(gmsh_cmd)}")
-        result = subprocess.run(gmsh_cmd, check=True, capture_output=True, text=True)
-        print("Gmsh output:")
-        print(result.stdout)
-        if result.stderr:
-            print("Gmsh stderr:")
-            print(result.stderr)
+        print("Gmsh output (live):")
+        # Run gmsh with live output - no capture_output so it prints directly to terminal
+        result = subprocess.run(gmsh_cmd, check=True)
+        print("Gmsh completed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error running gmsh: {e}")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
         sys.exit(1)
     except FileNotFoundError:
         print(f"Error: gmsh executable not found: {args.gmsh_executable}")
