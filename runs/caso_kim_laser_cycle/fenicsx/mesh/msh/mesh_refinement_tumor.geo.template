@@ -1,0 +1,171 @@
+// Gmsh project created on Sun Apr  6 09:54:29 2025
+SetFactory("OpenCASCADE");
+//+
+Point(1) = {0, 0, 0, 1.0};
+//+
+Point(2) = {15, 0, 0, 1.0};
+//+
+Point(3) = {15, 10, 0, 1.0};
+//+
+Point(4) = {0, 10, 0, 1.0};
+//+
+Point(5) = {5, 6.42, 0, 1.0};
+//+
+Point(6) = {5, 9.92, 0, 1.0};
+//+
+Point(7) = {0, 9.92, 0, 1.0};
+//+
+Point(8) = {0, 6.42, 0, 1.0};
+//+
+Point(9) = {5, 8.74, 0, 1.0};
+//+
+Point(10) = {15, 8.74, 0, 1.0};
+//+
+Point(11) = {15, 9.34, 0, 1.0};
+//+
+Point(12) = {5, 9.34, 0, 1.0};
+//+
+Point(13) = {15, 9.84, 0, 1.0};
+//+
+Point(14) = {5, 9.84, 0, 1.0};
+//+
+Line(1) = {1, 2};
+//+
+Line(2) = {2, 10};
+//+
+Line(3) = {10, 11};
+//+
+Line(4) = {11, 13};
+//+
+Line(5) = {13, 3};
+//+
+Line(6) = {3, 4};
+//+
+Line(7) = {4, 7};
+//+
+Line(8) = {7, 8};
+//+
+Line(9) = {8, 1};
+//+
+Line(10) = {7, 6};
+//+
+Line(11) = {6, 14};
+//+
+Line(12) = {14, 12};
+//+
+Line(13) = {12, 9};
+//+
+Line(14) = {9, 5};
+//+
+Line(15) = {5, 8};
+//+
+Line(16) = {11, 12};
+//+
+Line(17) = {13, 14};
+//+
+Line(18) = {9, 10};
+//+
+Curve Loop(1) = {6, 7, 10, 11, -17, 5};
+//+
+Plane Surface(1) = {1};
+//+
+Curve Loop(2) = {17, 12, -16, 4};
+//+
+Plane Surface(2) = {2};
+//+
+Curve Loop(3) = {13, 18, 3, 16};
+//+
+Plane Surface(3) = {3};
+//+
+Curve Loop(4) = {14, 15, 9, 1, 2, -18};
+//+
+Plane Surface(4) = {4};
+//+
+Curve Loop(5) = {8, -15, -14, -13, -12, -11, -10};
+//+
+Plane Surface(5) = {5};
+//+
+Physical Curve("convection", 19) = {6};
+//+
+//+
+Physical Curve("tissue", 20) = {1, 2, 5, 4, 3};
+//+
+Physical Surface("epidermis", 21) = {1};
+//+
+Physical Surface("p-dermis", 22) = {2};
+//+
+Physical Surface("r-dermis", 23) = {3};
+//+
+Physical Surface("fat", 24) = {4};
+//+
+Physical Surface("tumorNP", 25) = {5};
+//+
+Field[1] = Box;
+//+
+Field[1].Thickness = 10;
+//+
+Field[1].VIn = 0.1;
+//+
+Field[1].VOut = 1;
+//+
+Field[1].XMax = 4;
+//+
+Field[1].XMin = -1;
+//+
+Field[1].YMax = 10;
+//+
+Field[1].YMin = 8;
+//+
+Background Field = 1;
+//+
+Field[2] = Ball;
+//+
+Field[2].Radius = 0.5;
+//+
+Field[2].Thickness = 1;
+//+
+Field[2].VIn = 1;
+//+
+Field[2].VOut = 1;
+//+
+Field[2].YCenter = 9;
+//+
+Background Field = 2;
+//+
+Field[3] = Box;
+//+
+Field[3].Thickness = 5;
+//+
+Field[3].VIn = 0.2;
+//+
+Field[3].VOut = 1;
+//+
+Field[3].XMax = 10;
+//+
+Field[3].XMin = -1;
+//+
+Field[3].YMax = 10;
+//+
+Field[3].YMin = 9.42;
+//+
+Field[5] = Box;
+//+
+Field[5].Thickness = 0.01;
+//+
+Field[5].VIn = {tumor_refinement};
+//+
+Field[5].VOut = 1;
+//+
+Field[5].XMax = 5.1;
+//+
+Field[5].XMin = -1;
+//+
+Field[5].YMax = 9.93;
+//+
+Field[5].YMin = 9.91;
+//+
+Field[4] = MathEval;
+//+
+Field[4].F = "F1*F2*F3*F5";
+//+
+Background Field = 4;

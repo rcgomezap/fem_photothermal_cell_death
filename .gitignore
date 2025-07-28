@@ -10,6 +10,7 @@ log_fenicsx.txt
 *.pyc
 *.npy
 *.txt
+*.tmp
 FEM/bridge/__pycache__/export_data.cpython-310.pyc
 FEM/bridge/__pycache__/run_fenicsx.cpython-312.pyc
 FEM/fenicsx/src/RT/dp1/__pycache__/collimated_fem.cpython-310.pyc
