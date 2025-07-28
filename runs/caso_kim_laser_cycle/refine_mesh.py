@@ -8,6 +8,32 @@ This script:
 3. Saves the result to mesh_refinement_tumor.geo
 4. Runs gmsh to generate mesh.msh
 5. Runs fenicsx_args as a subprocess
+
+Usage Examples:
+    # Basic usage with default refinement value (0.1)
+    python refine_mesh.py
+
+    # Specify custom tumor refinement value for finer mesh
+    python refine_mesh.py --tumor_refinement 0.05
+
+    # Specify custom tumor refinement value for coarser mesh
+    python refine_mesh.py --tumor_refinement 0.2
+
+    # Use custom mesh directory
+    python refine_mesh.py --tumor_refinement 0.1 --mesh_dir custom/mesh/path
+
+    # Specify custom gmsh executable path
+    python refine_mesh.py --tumor_refinement 0.08 --gmsh_executable /usr/local/bin/gmsh
+
+    # Full example with all parameters
+    python refine_mesh.py --tumor_refinement 0.03 --mesh_dir fenicsx/mesh/msh --gmsh_executable gmsh
+
+Notes:
+    - Lower tumor_refinement values (e.g., 0.01-0.05) create finer meshes with more elements
+    - Higher tumor_refinement values (e.g., 0.1-0.5) create coarser meshes with fewer elements
+    - The script expects mesh_refinement_tumor.geo.template to exist in the specified mesh directory
+    - Gmsh must be installed and accessible in PATH (or specify full path with --gmsh_executable)
+    - The script runs fenicsx_args.py from the current working directory after mesh generation
 """
 
 import argparse
