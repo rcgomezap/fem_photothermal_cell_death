@@ -33,7 +33,7 @@ Notes:
     - Higher tumor_refinement values (e.g., 0.1-0.5) create coarser meshes with fewer elements
     - The script expects mesh_refinement_tumor.geo.template to exist in the specified mesh directory
     - Gmsh must be installed and accessible in PATH (or specify full path with --gmsh_executable)
-    - The script runs fenicsx_args.py from the current working directory after mesh generation
+    - The script runs fenicsx_args.py from the current working directory after mesh generation to convert the mesh to fenicsx format and run simulations
 """
 
 import argparse
