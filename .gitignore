@@ -7,10 +7,13 @@ log_fenicsx.txt
 *.h5
 *.csv
 *.nii
+*.jnii
+*.txt
+!requirements.txt
 *.pyc
 *.npy
-*.txt
 *.tmp
+venv/
 FEM/bridge/__pycache__/export_data.cpython-310.pyc
 FEM/bridge/__pycache__/run_fenicsx.cpython-312.pyc
 FEM/fenicsx/src/RT/dp1/__pycache__/collimated_fem.cpython-310.pyc
@@ -47,7 +50,6 @@ runs/caso_ivan/log_fenicsx.txt
 runs/caso_laboratorio/log_fenicsx.txt
 runs/caso_laboratorio/T_prom.npy
 *.npy
-*.txt
 runs/caso_ivan/caso0.npy
 runs/caso_ivan/log_fenicsx.txt
 runs/caso_laboratorio/log_fenicsx.txt

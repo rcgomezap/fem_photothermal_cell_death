@@ -14,11 +14,12 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../../')
 from FEM.bridge.run_fenicsx import run_simultation,mesh_convert
+from utils.image_convert import convert_jnii_to_nii_jdata
 
 # CONST
 mcx_path = "/home/rc/AUR/MCXStudio/MCXSuite/mcx/bin/mcx"
 
-def run_mcx(mu_a,mu_s):
+def run_mcx(mu_a,mu_s, output_format="jnii"):
 
     # load json file
     with open('mcx/mcx_base.json', 'r') as file:
@@ -34,8 +35,10 @@ def run_mcx(mu_a,mu_s):
 
     # run mcx
     os.chdir("mcx")
-    process = subprocess.Popen([mcx_path, "-f", "mcx.json","-D","P","-F", "nii","|","tee"])
+    process = subprocess.Popen([mcx_path, "-f", "mcx.json","-D","P","-F", output_format,"|","tee"])
     process.wait()
+    if output_format == "jnii":
+        convert_jnii_to_nii_jdata("mcx.jnii", "mcx.nii")
     os.chdir("..")
 
 def fem_run_params(rt,mu_a,mu_s):
